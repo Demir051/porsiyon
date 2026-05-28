@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Porsiyon · Öğün planı ve market fiyatları</title>
+    <meta name="description" content="Porsiyon — günlük öğün planı, aylık alışveriş listesi ve A101 fiyatları." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      @keyframes floatY {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 200% 50%;
+        }
+      }
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          opacity: 0.45;
+        }
+        50% {
+          opacity: 0.85;
+        }
+      }
+
+      body.landing-page {
+        background: var(--bg);
+      }
+      body.landing-page::before,
+      body.landing-page::after {
+        display: none;
+      }
+
+      .landing-mesh {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+        background: linear-gradient(
+          165deg,
+          var(--bg) 0%,
+          color-mix(in oklab, var(--bg) 88%, var(--primary) 12%) 45%,
+          var(--bg) 100%
+        );
+      }
+      .landing-mesh::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 90% 80% at 50% 40%,
+          transparent 0%,
+          color-mix(in oklab, var(--bg) 25%, transparent) 55%,
+          var(--bg) 100%
+        );
+      }
+      .mesh-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        opacity: 0.5;
+        animation: pulseGlow 10s ease-in-out infinite;
+        will-change: opacity, transform;
+      }
+      .mesh-blob-a {
+        width: min(75vw, 560px);
+        height: min(75vw, 560px);
+        top: -18%;
+        right: -12%;
+        background: color-mix(in oklab, var(--primary) 55%, transparent);
+      }
+      .mesh-blob-b {
+        width: min(65vw, 480px);
+        height: min(65vw, 480px);
+        bottom: -8%;
+        left: -18%;
+        background: color-mix(in oklab, var(--a101) 40%, var(--primary) 20%);
+        animation-delay: -4s;
+      }
+      .mesh-blob-c {
+        width: min(55vw, 400px);
+        height: min(55vw, 400px);
+        top: 42%;
+        left: 28%;
+        background: color-mix(in oklab, var(--good) 30%, var(--primary) 15%);
+        opacity: 0.35;
+        animation-delay: -7s;
+      }
+
+      @media (prefers-color-scheme: light) {
+        .mesh-blob {
+          opacity: 0.38;
+          filter: blur(100px);
+        }
+        .mesh-blob-c {
+          opacity: 0.28;
+        }
+      }
+
+      .landing {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .landing-hero {
+        flex: 1;
+        display: grid;
+        align-items: center;
+        gap: 32px;
+        padding: 48px 0 32px;
+        position: relative;
+        z-index: 1;
+      }
+      @media (min-width: 900px) {
+        .landing-hero {
+          grid-template-columns: 1.1fr 0.9fr;
+        }
+      }
+      .hero-copy {
+        animation: fadeUp 0.7s ease both;
+      }
+      .landing-hero h1 {
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        line-height: 1.08;
+        margin: 0 0 12px;
+        letter-spacing: -0.04em;
+        background: linear-gradient(
+          120deg,
+          var(--text) 0%,
+          color-mix(in oklab, var(--primary) 80%, var(--text)) 50%,
+          var(--text) 100%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shimmer 6s linear infinite;
+      }
+      .brand-mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+      .brand-mark span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--good);
+        box-shadow: 0 0 12px color-mix(in oklab, var(--good) 60%, transparent);
+        animation: pulseGlow 2s ease-in-out infinite;
+      }
+      .landing-hero p.lead {
+        font-size: 1.08rem;
+        color: var(--muted);
+        max-width: 52ch;
+        margin: 0 0 24px;
+        line-height: 1.65;
+      }
+      .landing-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .landing-actions .btn {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .landing-actions .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px color-mix(in oklab, var(--primary) 25%, transparent);
+      }
+      .feature-grid {
+        display: grid;
+        gap: 12px;
+        animation: fadeUp 0.8s ease 0.15s both;
+      }
+      .feature-card {
+        padding: 16px;
+        border-radius: var(--r-lg);
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      }
+      .feature-card:hover {
+        transform: translateY(-4px) scale(1.01);
+        border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
+        background: var(--surface-2);
+      }
+      .feature-card h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+      .feature-card p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .hero-visual {
+        position: relative;
+        min-height: 280px;
+        animation: fadeUp 0.9s ease 0.2s both;
+      }
+      .orbit-card {
+        position: absolute;
+        padding: 14px 16px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--border);
+        background: color-mix(in oklab, var(--surface) 90%, transparent);
+        backdrop-filter: blur(8px);
+        box-shadow: var(--shadow);
+        font-size: 13px;
+        animation: floatY 4s ease-in-out infinite;
+      }
+      .orbit-card strong {
+        display: block;
+        font-size: 18px;
+        color: var(--primary);
+        margin-top: 4px;
+      }
+      .orbit-card.c1 {
+        top: 8%;
+        left: 6%;
+        animation-delay: 0s;
+      }
+      .orbit-card.c2 {
+        top: 38%;
+        right: 4%;
+        animation-delay: 0.8s;
+      }
+      .orbit-card.c3 {
+        bottom: 8%;
+        left: 18%;
+        animation-delay: 1.4s;
+      }
+      .landing-footer {
+        padding: 20px 0 32px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body class="landing-page">
+    <div class="landing-mesh" aria-hidden="true">
+      <div class="mesh-blob mesh-blob-a"></div>
+      <div class="mesh-blob mesh-blob-b"></div>
+      <div class="mesh-blob mesh-blob-c"></div>
+    </div>
+    <div class="wrap landing">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div class="title">
+              <h1 style="font-size: 1.1rem; margin: 0">Porsiyon</h1>
+              <p style="margin: 0">Öğün planı &amp; A101 fiyatları</p>
+            </div>
+          </div>
+          <nav class="app-nav" aria-label="Sayfa geçişi">
+            <a href="/" class="active">Ana sayfa</a>
+            <a href="/plan.html">Öğün planı</a>
+            <a href="/malzemeler.html">Malzeme fiyatları</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="landing-hero">
+        <div class="hero-copy">
+          <div class="brand-mark"><span></span> Porsiyon</div>
+          <h1>Öğününü planla, sepetini hesapla.</h1>
+          <p class="lead">
+            Günlük öğün kartları, otomatik aylık liste ve
+            <a href="https://www.a101.com.tr" target="_blank" rel="noreferrer">A101</a> fiyatları tek
+            ekranda. İstemediğin malzemeyi plandan çıkar; fiyatlar tarayıcında saklanır.
+          </p>
+          <div class="landing-actions">
+            <a href="/plan.html" class="btn primary">Öğün planına git</a>
+            <a href="/malzemeler.html" class="btn">Malzeme listesi</a>
+          </div>
+          <div style="margin-top: 14px">
+            <span class="badge b-a101">A101</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbit-card c1">
+            Günlük plan
+            <strong>6 öğün</strong>
+          </div>
+          <div class="orbit-card c2">
+            Aylık tahmin
+            <strong id="demo-monthly">—</strong>
+          </div>
+          <div class="orbit-card c3">
+            Bu ay
+            <strong id="demo-days">—</strong>
+          </div>
+        </div>
+      </main>
+
+      <div class="feature-grid" style="position: relative; z-index: 1; margin-bottom: 8px">
+        <article class="feature-card">
+          <h3>Günlük &amp; aylık plan</h3>
+          <p>Hazır liste, yemekhane günleri ve bu ayın gerçek gün sayısına göre otomatik miktar.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Malzeme çıkarma</h3>
+          <p>Listeden istemediğin ürünü çıkar; miktar ve toplam anında güncellenir.</p>
+        </article>
+        <article class="feature-card">
+          <h3>A101 fiyatları</h3>
+          <p>Canlı market fiyatları; paket boyutuna göre aylık maliyet hesabı.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Manuel supplement</h3>
+          <p>Whey, kreatin vb. için ad ve aylık fiyatı kendin gir.</p>
+        </article>
+      </div>
+
+      <footer class="landing-footer">
+        <span>Porsiyon · MIT</span>
+        <span>Node.js + Express</span>
+      </footer>
+    </div>
+    <script>
+      (function () {
+        const now = new Date();
+        const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const month = now.toLocaleDateString('tr-TR', { month: 'long' });
+        const daysEl = document.getElementById('demo-days');
+        const monEl = document.getElementById('demo-monthly');
+        if (daysEl) daysEl.textContent = `${month} · ${days} gün`;
+        if (monEl) monEl.textContent = 'Canlı hesap';
+      })();
+    </script>
+  </body>
+</html>

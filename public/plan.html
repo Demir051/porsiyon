@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Öğün planı · Porsiyon</title>
+    <meta name="color-scheme" content="light dark" />
+    <style>
+      :root{
+        --bg: #0b1220;
+        --surface: rgba(255,255,255,.075);
+        --surface-2: rgba(255,255,255,.105);
+        --surface-3: rgba(255,255,255,.14);
+        --border: rgba(255,255,255,.12);
+        --text: rgba(255,255,255,.92);
+        --muted: rgba(255,255,255,.66);
+        --muted-2: rgba(255,255,255,.5);
+        --shadow: 0 18px 50px rgba(0,0,0,.45);
+        --ring: 0 0 0 3px rgba(96,165,250,.22);
+
+        --primary: #60a5fa;
+        --good: #22c55e;
+        --warn: #f59e0b;
+        --neutral: #a1a1aa;
+
+        --r-lg: 18px;
+        --r-md: 14px;
+        --r-sm: 12px;
+
+        --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      }
+
+      @media (prefers-color-scheme: light){
+        :root{
+          --bg: #f6f7fb;
+          --surface: rgba(2,6,23,.05);
+          --surface-2: rgba(2,6,23,.07);
+          --surface-3: rgba(2,6,23,.095);
+          --border: rgba(2,6,23,.1);
+          --text: rgba(2,6,23,.92);
+          --muted: rgba(2,6,23,.68);
+          --muted-2: rgba(2,6,23,.5);
+          --shadow: 0 18px 50px rgba(2,6,23,.16);
+          --ring: 0 0 0 3px rgba(37,99,235,.14);
+        }
+      }
+
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
+      }
+
+      /*
+        Background is rendered behind content as a fixed layer.
+        This avoids gradients "crossing" over text while scrolling and
+        keeps contrast stable across the page.
+      */
+      body::before{
+        content:"";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+        background:
+          radial-gradient(900px 420px at 15% 0%, color-mix(in oklab, var(--primary) 28%, transparent), transparent 62%),
+          radial-gradient(700px 360px at 100% 10%, color-mix(in oklab, var(--good) 22%, transparent), transparent 58%),
+          radial-gradient(900px 600px at 40% 120%, color-mix(in oklab, var(--warn) 18%, transparent), transparent 58%),
+          linear-gradient(180deg, color-mix(in oklab, var(--bg) 92%, transparent), var(--bg) 60%);
+        transform: translateZ(0);
+        will-change: opacity;
+        transition: opacity .35s ease;
+      }
+
+      /* Soft scrim to keep text readable everywhere */
+      body::after{
+        content:"";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            180deg,
+            color-mix(in oklab, var(--bg) 82%, transparent) 0%,
+            color-mix(in oklab, var(--bg) 90%, transparent) 45%,
+            color-mix(in oklab, var(--bg) 96%, transparent) 100%
+          );
+      }
+
+      a{color:inherit}
+      button{font:inherit}
+
+      .wrap{
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 16px 44px;
+        position: relative;
+        z-index: 0;
+      }
+
+      .topbar{
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 12px 0;
+        backdrop-filter: blur(10px);
+      }
+
+      .topbar-inner{
+        border: 1px solid var(--border);
+        background: color-mix(in oklab, var(--bg) 70%, transparent);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow);
+        padding: 14px 14px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .brand{
+        display:flex;
+        gap: 12px;
+        align-items:center;
+        min-width: 240px;
+      }
+
+      .logo{
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(96,165,250,.85), rgba(34,197,94,.8));
+        box-shadow: 0 10px 22px rgba(0,0,0,.18);
+        border: 1px solid rgba(255,255,255,.18);
+      }
+
+      .title{
+        display:flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .title h1{
+        margin:0;
+        font-size: 14px;
+        letter-spacing: .2px;
+        font-weight: 650;
+      }
+      .title p{
+        margin:0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .controls{
+        display:flex;
+        gap: 10px;
+        align-items:center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .seg{
+        display:flex;
+        gap: 6px;
+        padding: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+      }
+
+      .seg button{
+        border: 0;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background .15s ease, color .15s ease, transform .05s ease;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .2px;
+        white-space: nowrap;
+      }
+      .seg button:active{transform: translateY(1px)}
+      .seg button[aria-selected="true"]{
+        background: var(--surface-3);
+        color: var(--text);
+      }
+      .seg button:focus-visible{outline:none; box-shadow: var(--ring)}
+
+      .btn{
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .2px;
+        transition: transform .05s ease, background .15s ease;
+        white-space: nowrap;
+      }
+      .btn:hover{background: var(--surface-3)}
+      .btn:active{transform: translateY(1px)}
+      .btn:focus-visible{outline:none; box-shadow: var(--ring)}
+      .btn.primary{
+        border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
+        background: color-mix(in oklab, var(--primary) 18%, var(--surface-2));
+      }
+
+      .muted{color: var(--muted); font-size: 12px}
+
+      .hint{
+        font-size: 12px;
+        color: var(--muted);
+        max-width: 520px;
+      }
+
+      .grid{
+        display: grid;
+        grid-template-columns: 1.25fr .75fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      @media (max-width: 920px){
+        .grid{grid-template-columns: 1fr}
+      }
+
+      .panel{
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .panel-head{
+        padding: 14px 14px 0;
+        display:flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .panel-head h2{
+        margin:0;
+        font-size: 14px;
+        font-weight: 650;
+      }
+      .panel-head p{
+        margin:6px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .panel-body{padding: 14px}
+
+      .toolbar{
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+
+      .price{
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .link{
+        color: var(--muted);
+        text-decoration: none;
+        border-bottom: 1px dashed color-mix(in oklab, var(--muted) 55%, transparent);
+      }
+      .link:hover{color: var(--text)}
+
+      .mini{
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .cards{
+        display:grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 10px;
+      }
+
+      .card{
+        grid-column: span 6;
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        background: var(--surface-2);
+        padding: 12px;
+        min-height: 120px;
+        display:flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 680px){
+        .card{grid-column: span 12}
+      }
+
+      .kicker{
+        display:flex;
+        align-items:center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: .3px;
+        text-transform: uppercase;
+        font-weight: 650;
+      }
+
+      .badge{
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface-3);
+        color: var(--text);
+        letter-spacing: .2px;
+        text-transform:none;
+        font-weight: 650;
+      }
+      .b-primary{border-color: color-mix(in oklab, var(--primary) 35%, var(--border)); background: color-mix(in oklab, var(--primary) 22%, var(--surface-3));}
+      .b-good{border-color: color-mix(in oklab, var(--good) 35%, var(--border)); background: color-mix(in oklab, var(--good) 18%, var(--surface-3));}
+      .b-warn{border-color: color-mix(in oklab, var(--warn) 35%, var(--border)); background: color-mix(in oklab, var(--warn) 18%, var(--surface-3));}
+      .b-neutral{border-color: color-mix(in oklab, var(--neutral) 35%, var(--border)); background: color-mix(in oklab, var(--neutral) 14%, var(--surface-3));}
+
+      .card h3{
+        margin: 8px 0 0;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: .1px;
+      }
+
+      .items{
+        margin: 8px 0 0;
+        padding: 0;
+        list-style: none;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .items li{margin: 3px 0}
+
+      .metrics{
+        display:flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .pill{
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-weight: 650;
+        letter-spacing: .1px;
+      }
+      .pill.good{border-color: color-mix(in oklab, var(--good) 30%, var(--border)); color: color-mix(in oklab, var(--good) 75%, var(--text));}
+      .pill.primary{border-color: color-mix(in oklab, var(--primary) 30%, var(--border)); color: color-mix(in oklab, var(--primary) 75%, var(--text));}
+      .pill.warn{border-color: color-mix(in oklab, var(--warn) 30%, var(--border)); color: color-mix(in oklab, var(--warn) 85%, var(--text));}
+      .pill.neutral{border-color: color-mix(in oklab, var(--neutral) 30%, var(--border)); color: var(--muted);}
+
+      .aside-cards{
+        display:grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      @media (max-width: 920px){
+        .aside-cards{grid-template-columns: repeat(2, 1fr)}
+      }
+      @media (max-width: 520px){
+        .aside-cards{grid-template-columns: 1fr}
+      }
+
+      .stat{
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        background: var(--surface-2);
+        padding: 12px;
+      }
+      .stat .lbl{
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        font-weight: 650;
+        margin-bottom: 6px;
+      }
+      .stat .val{
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: .2px;
+      }
+      .stat .sub{
+        margin-top: 2px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .note{
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        background: var(--surface-2);
+        padding: 12px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .table{
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        background: var(--surface-2);
+      }
+      .table th, .table td{
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        font-size: 13px;
+      }
+      .table th{
+        font-size: 11px;
+        letter-spacing: .3px;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: color-mix(in oklab, var(--surface-2) 55%, transparent);
+      }
+      .table tr:last-child td{border-bottom:0}
+      .table tr:hover td{background: color-mix(in oklab, var(--surface-3) 50%, transparent)}
+      .table .sep td{
+        font-size: 11px;
+        letter-spacing: .3px;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 750;
+        background: color-mix(in oklab, var(--surface-3) 55%, transparent);
+      }
+      .table .total td{
+        font-weight: 800;
+        border-top: 2px solid var(--border);
+        background: color-mix(in oklab, var(--surface-2) 55%, transparent);
+      }
+
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        white-space:nowrap;
+        border:0;
+      }
+
+      .view{display:none}
+      .view.show{display:block}
+
+      .plan-settings{
+        border:1px solid var(--border);
+        border-radius:var(--r-lg);
+        background:var(--surface-2);
+        padding:12px;
+        margin-bottom:12px;
+      }
+      .plan-settings h3{margin:0 0 10px;font-size:13px;font-weight:650}
+      .plan-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+        gap:10px;
+        align-items:end;
+      }
+      .plan-grid label{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+      .plan-grid select,.plan-grid input[type=number]{
+        padding:8px 10px;border-radius:8px;border:1px solid var(--border);
+        background:var(--surface);color:var(--text);font-size:13px;
+      }
+      select option{
+        background: #0f172a;
+        color: rgba(255,255,255,.95);
+      }
+      @media (prefers-color-scheme: light){
+        select option{
+          background: #ffffff;
+          color: #0f172a;
+        }
+      }
+      .supplement-accordion{margin-top:10px;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:var(--surface-2)}
+      .supplement-accordion summary{
+        cursor:pointer;padding:10px 12px;font-size:12px;font-weight:650;color:var(--text);
+        list-style:none;display:flex;align-items:center;justify-content:space-between;
+      }
+      .supplement-accordion summary::-webkit-details-marker{display:none}
+      .supplement-accordion summary::after{content:'+';font-size:16px;color:var(--muted);transition:transform .2s ease}
+      .supplement-accordion[open] summary::after{content:'−'}
+      .supplement-accordion .accordion-body{padding:0 12px 12px}
+      .supplement-row{display:grid;grid-template-columns:1fr 110px auto;gap:8px;margin-bottom:6px}
+      .supplement-row input{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px}
+      .excluded-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;min-height:0}
+      .excluded-chips:empty{display:none}
+      .excluded-chip{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);cursor:pointer}
+      .excluded-chip:hover{border-color:var(--primary);color:var(--primary)}
+      .btn-exclude{font-size:11px;padding:4px 8px;white-space:nowrap}
+      .ingredient-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;max-height:160px;overflow-y:auto;padding:4px 0}
+      .ingredient-chip{font-size:11px;padding:5px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+      .ingredient-chip:has(input:not(:checked)){opacity:.55;border-style:dashed;color:var(--muted)}
+      .ingredient-chip input{margin:0}
+      #view-monthly .grid{grid-template-columns:1.2fr .8fr}
+      .month-label{
+        display:inline-flex;align-items:center;padding:8px 12px;border-radius:8px;
+        border:1px solid var(--border);background:var(--surface);color:var(--text);
+        font-size:13px;font-weight:600;text-transform:capitalize;
+      }
+      .plan-checks{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;align-items:center}
+      .plan-checks label{flex-direction:row;align-items:center;gap:6px;font-size:12px;color:var(--text);text-transform:none;letter-spacing:0}
+      .day-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+      .day-chips label{font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;cursor:pointer}
+      .day-chips input{margin-right:4px}
+      .toolbar-actions{display:flex;flex-wrap:wrap;gap:8px}
+      .hidden{display:none!important}
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div class="title">
+              <h1>Öğün planı</h1>
+              <p>Porsiyon · günlük ve aylık görünüm</p>
+            </div>
+          </div>
+
+          <div class="controls">
+            <div class="seg" role="tablist" aria-label="Sayfa geçişi" style="margin-right:4px">
+              <a href="/" role="tab" aria-selected="false" style="text-decoration:none;color:var(--muted);padding:8px 12px;border-radius:999px;font-size:12px;font-weight:600">Ana sayfa</a>
+              <a href="/plan.html" role="tab" aria-selected="true" style="text-decoration:none;color:var(--text);padding:8px 12px;border-radius:999px;font-size:12px;font-weight:600">Öğün planı</a>
+              <a href="/malzemeler.html" role="tab" aria-selected="false" style="text-decoration:none;color:var(--muted);padding:8px 12px;border-radius:999px;font-size:12px;font-weight:600">Malzeme fiyatları</a>
+            </div>
+            <div class="seg" role="tablist" aria-label="Görünüm seç">
+              <button id="btn-view-weekly" role="tab" aria-selected="true" aria-controls="view-weekly" onclick="setView('weekly')">Günlük</button>
+              <button id="btn-view-monthly" role="tab" aria-selected="false" aria-controls="view-monthly" onclick="setView('monthly')">Aylık</button>
+            </div>
+            <div class="seg" role="tablist" aria-label="Hafta tipi seç" id="seg-daytype">
+              <button id="btn-day-weekday" role="tab" aria-selected="true" aria-controls="weekly-weekday" onclick="setDayType('weekday')">Hafta içi</button>
+              <button id="btn-day-weekend" role="tab" aria-selected="false" aria-controls="weekly-weekend" onclick="setDayType('weekend')">Hafta sonu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="hint" id="hint-text">
+        Hafta içi öğle yemekhaneden, hafta sonu evde pişirilir. Üstten “Günlük / Aylık” ile görünümü değiştir.
+      </p>
+
+      <!-- HAFTALIK -->
+      <section class="view show" id="view-weekly" aria-labelledby="btn-view-weekly">
+        <div class="grid">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Günlük Öğünler</h2>
+                <p>Plan, pratik ve tekrar edilebilir olacak şekilde düzenlendi.</p>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <div id="weekly-weekday" class="cards" role="region" aria-label="Hafta içi planı">
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-warn">Supplement</span> Sabah aç karna</div>
+                    <h3>Kreatin</h3>
+                    <ul class="items">
+                      <li>5g kreatin monohidrat</li>
+                      <li>1 bardak su ile</li>
+                    </ul>
+                  </div>
+                  <div class="metrics"><span class="pill neutral">Her gün sabit</span></div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-primary">Ana</span> 07:30</div>
+                    <h3>Yulaf + Yumurta</h3>
+                    <ul class="items">
+                      <li>100g yulaf ezmesi (sütlü)</li>
+                      <li>4 yumurta (haşlama / omlet)</li>
+                      <li>1 muz + 1 tk bal</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 42g</span>
+                    <span class="pill primary">Karb 90g</span>
+                    <span class="pill warn">~680 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-good">Ara</span> 10:30</div>
+                    <h3>Lor + Meyve + Ceviz</h3>
+                    <ul class="items">
+                      <li>150g lor peyniri</li>
+                      <li>1 elma</li>
+                      <li>20g ceviz</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 17g</span>
+                    <span class="pill primary">Karb 22g</span>
+                    <span class="pill warn">~270 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-neutral">Yemekhane</span> 12:30</div>
+                    <h3>Yemekhane öğünü</h3>
+                    <ul class="items">
+                      <li>Protein kaynağı seç (et/tavuk/baklagil)</li>
+                      <li>Pirinç veya makarna + çorba + salata</li>
+                      <li><strong>Kızartma/hamur işi</strong> minimum</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">~Protein 35g</span>
+                    <span class="pill neutral">~600 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-good">Ara</span> Antrenman sonrası</div>
+                    <h3>Protein Shake</h3>
+                    <ul class="items">
+                      <li>1 ölçek (30g) whey</li>
+                      <li>300ml süt veya su</li>
+                      <li>1 muz</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 30g</span>
+                    <span class="pill primary">Karb 35g</span>
+                    <span class="pill warn">~340 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-primary">Ana</span> 19:00</div>
+                    <h3>Tavuk + Pilav</h3>
+                    <ul class="items">
+                      <li>200g tavuk göğsü (ızgara/haşlama)</li>
+                      <li>100g pirinç (çiğ) — pilav</li>
+                      <li>Salata + 1 tk zeytinyağı</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 48g</span>
+                    <span class="pill primary">Karb 78g</span>
+                    <span class="pill warn">~520 kcal</span>
+                  </div>
+                </article>
+              </div>
+
+              <div id="weekly-weekend" class="cards" role="region" aria-label="Hafta sonu planı" style="display:none">
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-warn">Supplement</span> Sabah aç karna</div>
+                    <h3>Kreatin</h3>
+                    <ul class="items">
+                      <li>5g kreatin monohidrat</li>
+                      <li>1 bardak su ile</li>
+                    </ul>
+                  </div>
+                  <div class="metrics"><span class="pill neutral">Her gün sabit</span></div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-primary">Ana</span> 08:00</div>
+                    <h3>Yulaf + Yumurta</h3>
+                    <ul class="items">
+                      <li>100g yulaf ezmesi (sütlü)</li>
+                      <li>4 yumurta (haşlama / omlet)</li>
+                      <li>1 muz + 1 tk bal</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 42g</span>
+                    <span class="pill primary">Karb 90g</span>
+                    <span class="pill warn">~680 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-good">Ara</span> 10:30</div>
+                    <h3>Lor + Meyve + Ceviz</h3>
+                    <ul class="items">
+                      <li>150g lor peyniri</li>
+                      <li>1 elma</li>
+                      <li>20g ceviz</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 17g</span>
+                    <span class="pill primary">Karb 22g</span>
+                    <span class="pill warn">~270 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-primary">Ana</span> 13:00</div>
+                    <h3>Tavuk + Çift Pilav</h3>
+                    <ul class="items">
+                      <li>250g tavuk göğsü (ızgara)</li>
+                      <li>150g pirinç (çiğ) — pilav</li>
+                      <li>Salata + 1 tk zeytinyağı</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 58g</span>
+                    <span class="pill primary">Karb 115g</span>
+                    <span class="pill warn">~760 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-good">Ara</span> Antrenman sonrası</div>
+                    <h3>Protein Shake</h3>
+                    <ul class="items">
+                      <li>1 ölçek (30g) whey</li>
+                      <li>300ml süt veya su</li>
+                      <li>1 muz</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 30g</span>
+                    <span class="pill primary">Karb 35g</span>
+                    <span class="pill warn">~340 kcal</span>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div>
+                    <div class="kicker"><span class="badge b-primary">Ana</span> 19:00</div>
+                    <h3>Tavuk + Pilav</h3>
+                    <ul class="items">
+                      <li>200g tavuk göğsü (haşlama)</li>
+                      <li>100g pirinç (çiğ) — pilav</li>
+                      <li>Salata + 1 tk zeytinyağı</li>
+                    </ul>
+                  </div>
+                  <div class="metrics">
+                    <span class="pill good">Protein 48g</span>
+                    <span class="pill primary">Karb 78g</span>
+                    <span class="pill warn">~520 kcal</span>
+                  </div>
+                </article>
+              </div>
+
+              <div class="note" id="note-weekday">
+                Hafta içi günlük ~172g protein (yemekhane tahmini dahil) + ~2.410 kcal. Yemekhanede en iyi seçim: et/tavuk yemeği + pirinç + çorba. Hamur işi, kızartma ve tatlıdan kaçın — öğünün kalitesi günü belirler.
+              </div>
+              <div class="note" id="note-weekend" style="display:none">
+                Hafta sonu ~195g protein + ~2.570 kcal. Öğle öğünü evde tam kontrollü olduğu için pirinç miktarı biraz daha yüksek tutuldu.
+              </div>
+            </div>
+          </div>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Hızlı Özet</h2>
+                <p>Görünüm ve hafta tipi değişince otomatik güncellenir.</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="aside-cards">
+                <div class="stat">
+                  <div class="lbl">Hedef protein</div>
+                  <div class="val" id="stat-protein">~172g+</div>
+                  <div class="sub">yemekhane dahil</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Tahmini kalori</div>
+                  <div class="val" id="stat-kcal">~2.410</div>
+                  <div class="sub">günlük</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Ana odak</div>
+                  <div class="val" style="font-size:16px" id="stat-focus">Yemekhane seçimi</div>
+                  <div class="sub" id="stat-focus-sub">öğle kalitesi kritik</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Hatırlatma</div>
+                  <div class="val" style="font-size:16px">Su + uyku</div>
+                  <div class="sub">performansı belirler</div>
+                </div>
+              </div>
+
+              <div class="note">
+                Aylık görünümde <strong>Fiyatları Güncelle</strong> ile canlı fiyatlar çekilir; toplam otomatik hesaplanır.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- AYLIK -->
+      <section class="view" id="view-monthly" aria-labelledby="btn-view-monthly">
+        <div class="grid">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Aylık alışveriş listesi</h2>
+                <p id="monthly-subtitle">Plan yükleniyor…</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="plan-settings">
+                <h3>Plan ayarları</h3>
+                <div class="plan-grid">
+                  <label>
+                    Hazır liste
+                    <select id="plan-preset"></select>
+                  </label>
+                  <label>
+                    Dönem
+                    <span id="plan-month-label" class="month-label">—</span>
+                  </label>
+                </div>
+                <div class="plan-checks">
+                  <label><input type="checkbox" id="plan-yemekhane" checked /> Öğle yemekhanesi</label>
+                  <label><input type="checkbox" id="plan-supplements" checked /> Supplement dahil</label>
+                </div>
+                <div id="yk-days-wrap" class="day-chips">
+                  <span class="mini" style="width:100%;margin-bottom:4px">Yemekhane günleri (öğle evde sayılmaz):</span>
+                  <label><input type="checkbox" id="yk-day-1" checked /> Pzt</label>
+                  <label><input type="checkbox" id="yk-day-2" checked /> Sal</label>
+                  <label><input type="checkbox" id="yk-day-3" checked /> Çar</label>
+                  <label><input type="checkbox" id="yk-day-4" checked /> Per</label>
+                  <label><input type="checkbox" id="yk-day-5" checked /> Cum</label>
+                  <label><input type="checkbox" id="yk-day-6" /> Cmt</label>
+                  <label><input type="checkbox" id="yk-day-0" /> Paz</label>
+                </div>
+                <details id="supplement-manual-wrap" class="supplement-accordion">
+                  <summary>Manuel supplement fiyatları</summary>
+                  <div class="accordion-body">
+                    <div id="supplement-list"></div>
+                    <button type="button" class="btn ghost small" id="sup-add-btn">+ Supplement ekle</button>
+                  </div>
+                </details>
+                <details class="supplement-accordion" id="ingredient-picker-wrap">
+                  <summary>Malzeme çıkar</summary>
+                  <div class="accordion-body">
+                    <p class="mini" style="margin:0 0 8px">Tiki kaldırılan malzeme plandan ve listeden düşer.</p>
+                    <div id="ingredient-picker" class="ingredient-picker"></div>
+                  </div>
+                </details>
+              </div>
+
+              <div id="excluded-chips" class="excluded-chips" aria-label="Çıkarılan malzemeler"></div>
+
+              <div class="toolbar">
+                <div class="toolbar-actions">
+                  <button class="btn primary" type="button" onclick="updatePrices()">Fiyatları güncelle</button>
+                  <button class="btn" type="button" onclick="syncToMalzemeler()">Malzeme listesine ekle</button>
+                </div>
+                <div class="muted">
+                  Fiyatlar A101 marketinden çekilir
+                  <span class="mini" id="price-status"></span>
+                </div>
+              </div>
+              <table class="table" aria-label="Aylık alışveriş listesi">
+                <thead>
+                  <tr>
+                    <th>Malzeme</th>
+                    <th>Kategori</th>
+                    <th>Günlük porsiyon</th>
+                    <th>Aylık miktar</th>
+                    <th>Birim fiyat</th>
+                    <th>Kaynak</th>
+                    <th>Aylık</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="monthly-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="panel" id="monthly-cost-aside">
+            <div class="panel-head">
+              <div>
+                <h2>Masraf özeti</h2>
+                <p id="cost-aside-period">—</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="aside-cards">
+                <div class="stat">
+                  <div class="lbl">Aylık toplam</div>
+                  <div class="val" style="color:var(--primary);font-size:22px" id="cost-monthly-total">—</div>
+                  <div class="sub">gıda + supplement</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Günlük ortalama</div>
+                  <div class="val" id="cost-daily-avg">—</div>
+                  <div class="sub" id="cost-daily-sub">bu ayın gün sayısına bölünür</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Gıda</div>
+                  <div class="val" id="cost-food">—</div>
+                  <div class="sub">market alışverişi</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Supplement</div>
+                  <div class="val" id="cost-supplement">—</div>
+                  <div class="sub">manuel girilen</div>
+                </div>
+              </div>
+              <div class="note" style="margin-top:10px">
+                <strong>Fiyatları güncelle</strong> ile A101 fiyatları çekilir. Çıkardığın malzemeler toplama dahil edilmez.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "sporcuPlan:viewState:v1";
+
+      const state = {
+        view: "weekly",
+        dayType: "weekday",
+      };
+
+      function saveState(){
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch{}
+      }
+
+      function loadState(){
+        try{
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if(!raw) return;
+          const parsed = JSON.parse(raw);
+          if(parsed && (parsed.view === "weekly" || parsed.view === "monthly")) state.view = parsed.view;
+          if(parsed && (parsed.dayType === "weekday" || parsed.dayType === "weekend")) state.dayType = parsed.dayType;
+        }catch{}
+      }
+
+      function setSelected(btnId, selected){
+        const el = document.getElementById(btnId);
+        if(!el) return;
+        el.setAttribute("aria-selected", selected ? "true" : "false");
+      }
+
+      function setView(next){
+        state.view = next;
+        saveState();
+
+        document.getElementById("view-weekly").classList.toggle("show", next === "weekly");
+        document.getElementById("view-monthly").classList.toggle("show", next === "monthly");
+
+        setSelected("btn-view-weekly", next === "weekly");
+        setSelected("btn-view-monthly", next === "monthly");
+
+        const segDayType = document.getElementById("seg-daytype");
+        segDayType.style.display = next === "weekly" ? "flex" : "none";
+
+        const hint = document.getElementById("hint-text");
+        hint.textContent = next === "weekly"
+          ? "Hafta içi öğle yemekhaneden, hafta sonu evde pişirilir. Üstten “Günlük / Aylık” ile görünümü değiştir."
+          : "Aylık görünümde alışveriş listesi ve canlı fiyat toplamı tek tabloda.";
+      }
+
+      function setDayType(next){
+        state.dayType = next;
+        saveState();
+
+        const isWeekday = next === "weekday";
+        document.getElementById("weekly-weekday").style.display = isWeekday ? "grid" : "none";
+        document.getElementById("weekly-weekend").style.display = isWeekday ? "none" : "grid";
+        document.getElementById("note-weekday").style.display = isWeekday ? "block" : "none";
+        document.getElementById("note-weekend").style.display = isWeekday ? "none" : "block";
+
+        setSelected("btn-day-weekday", isWeekday);
+        setSelected("btn-day-weekend", !isWeekday);
+
+        const stats = window.__planWeeklyStats?.[next];
+        if (stats) {
+          if (stats.protein) document.getElementById("stat-protein").textContent = stats.protein;
+          if (stats.kcal) document.getElementById("stat-kcal").textContent = stats.kcal;
+          if (stats.focus) document.getElementById("stat-focus").textContent = stats.focus;
+          if (stats.focusSub) document.getElementById("stat-focus-sub").textContent = stats.focusSub;
+        } else {
+          document.getElementById("stat-protein").textContent = isWeekday ? "~172g+" : "~195g+";
+          document.getElementById("stat-kcal").textContent = isWeekday ? "~2.410" : "~2.570";
+          document.getElementById("stat-focus").textContent = isWeekday ? "Yemekhane seçimi" : "Ev kontrolü";
+          document.getElementById("stat-focus-sub").textContent = isWeekday ? "öğle kalitesi kritik" : "öğle porsiyonu net";
+        }
+      }
+
+      window.setDayType = setDayType;
+
+      loadState();
+      setView(state.view);
+      setDayType(state.dayType);
+    </script>
+    <script src="price-store.js"></script>
+    <script src="plan-app.js"></script>
+  </body>
+</html>

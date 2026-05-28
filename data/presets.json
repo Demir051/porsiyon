@@ -1,0 +1,244 @@
+{
+  "presets": [
+    {
+      "id": "hazir-ogun-planim",
+      "name": "Hazır öğün planım",
+      "description": "Hafta içi öğle yemekhane, hafta sonu evde. Supplement dahil.",
+      "weeklyPlan": {
+        "weekday": {
+          "note": "Hafta içi günlük ~172g protein (yemekhane tahmini dahil) + ~2.410 kcal. Yemekhanede en iyi seçim: et/tavuk yemeği + pirinç + çorba. Hamur işi, kızartma ve tatlıdan kaçın — öğünün kalitesi günü belirler.",
+          "stats": { "protein": "~172g+", "kcal": "~2.410", "focus": "Yemekhane seçimi", "focusSub": "öğle kalitesi kritik" },
+          "meals": [
+            { "badge": "b-warn", "type": "Supplement", "time": "Sabah aç karna", "title": "Kreatin", "items": ["5g kreatin monohidrat", "1 bardak su ile"], "pills": [{ "class": "neutral", "text": "Her gün sabit" }] },
+            { "badge": "b-primary", "type": "Ana", "time": "07:30", "title": "Yulaf + Yumurta", "items": ["100g yulaf ezmesi (sütlü)", "4 yumurta (haşlama / omlet)", "1 muz + 1 tk bal"], "pills": [{ "class": "good", "text": "Protein 42g" }, { "class": "primary", "text": "Karb 90g" }, { "class": "warn", "text": "~680 kcal" }] },
+            { "badge": "b-good", "type": "Ara", "time": "10:30", "title": "Lor + Meyve + Ceviz", "items": ["150g lor peyniri", "1 elma", "20g ceviz"], "pills": [{ "class": "good", "text": "Protein 17g" }, { "class": "primary", "text": "Karb 22g" }, { "class": "warn", "text": "~270 kcal" }] },
+            { "badge": "b-neutral", "type": "Yemekhane", "time": "12:30", "title": "Yemekhane öğünü", "items": ["Protein kaynağı seç (et/tavuk/baklagil)", "Pirinç veya makarna + çorba + salata", "<strong>Kızartma/hamur işi</strong> minimum"], "pills": [{ "class": "good", "text": "~Protein 35g" }, { "class": "neutral", "text": "~600 kcal" }] },
+            { "badge": "b-good", "type": "Ara", "time": "Antrenman sonrası", "title": "Protein Shake", "items": ["1 ölçek (30g) whey", "300ml süt veya su", "1 muz"], "pills": [{ "class": "good", "text": "Protein 30g" }, { "class": "primary", "text": "Karb 35g" }, { "class": "warn", "text": "~340 kcal" }] },
+            { "badge": "b-primary", "type": "Ana", "time": "19:00", "title": "Tavuk + Pilav", "items": ["200g tavuk göğsü (ızgara/haşlama)", "100g pirinç (çiğ) — pilav", "Salata + 1 tk zeytinyağı"], "pills": [{ "class": "good", "text": "Protein 48g" }, { "class": "primary", "text": "Karb 78g" }, { "class": "warn", "text": "~520 kcal" }] }
+          ]
+        },
+        "weekend": {
+          "note": "Hafta sonu ~195g protein + ~2.570 kcal. Öğle öğünü evde tam kontrollü olduğu için pirinç miktarı biraz daha yüksek tutuldu.",
+          "stats": { "protein": "~195g", "kcal": "~2.570", "focus": "Evde pişirme", "focusSub": "öğle + akşam kontrol" },
+          "meals": [
+            { "badge": "b-warn", "type": "Supplement", "time": "Sabah aç karna", "title": "Kreatin", "items": ["5g kreatin monohidrat", "1 bardak su ile"], "pills": [{ "class": "neutral", "text": "Her gün sabit" }] },
+            { "badge": "b-primary", "type": "Ana", "time": "08:00", "title": "Yulaf + Yumurta", "items": ["100g yulaf ezmesi (sütlü)", "4 yumurta (haşlama / omlet)", "1 muz + 1 tk bal"], "pills": [{ "class": "good", "text": "Protein 42g" }, { "class": "primary", "text": "Karb 90g" }, { "class": "warn", "text": "~680 kcal" }] },
+            { "badge": "b-good", "type": "Ara", "time": "10:30", "title": "Lor + Meyve + Ceviz", "items": ["150g lor peyniri", "1 elma", "20g ceviz"], "pills": [{ "class": "good", "text": "Protein 17g" }, { "class": "primary", "text": "Karb 22g" }, { "class": "warn", "text": "~270 kcal" }] },
+            { "badge": "b-primary", "type": "Ana", "time": "13:00", "title": "Tavuk + Çift Pilav", "items": ["250g tavuk göğsü (ızgara)", "150g pirinç (çiğ) — pilav", "Salata + 1 tk zeytinyağı"], "pills": [{ "class": "good", "text": "Protein 58g" }, { "class": "primary", "text": "Karb 115g" }, { "class": "warn", "text": "~760 kcal" }] },
+            { "badge": "b-good", "type": "Ara", "time": "Antrenman sonrası", "title": "Protein Shake", "items": ["1 ölçek (30g) whey", "300ml süt veya su", "1 muz"], "pills": [{ "class": "good", "text": "Protein 30g" }, { "class": "primary", "text": "Karb 35g" }, { "class": "warn", "text": "~340 kcal" }] },
+            { "badge": "b-primary", "type": "Ana", "time": "19:00", "title": "Tavuk + Pilav", "items": ["200g tavuk göğsü (haşlama)", "100g pirinç (çiğ) — pilav", "Salata + 1 tk zeytinyağı"], "pills": [{ "class": "good", "text": "Protein 48g" }, { "class": "primary", "text": "Karb 78g" }, { "class": "warn", "text": "~520 kcal" }] }
+          ]
+        }
+      },
+      "ingredients": [
+        {
+          "id": "tavuk",
+          "name": "Tavuk göğsü",
+          "searchQuery": "tavuk göğsü",
+          "category": "Protein",
+          "categoryClass": "b-good",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [
+            { "dayFilter": "weekday", "meal": "aksam", "amount": 200 },
+            { "dayFilter": "weekend", "meal": "ogle", "amount": 250 },
+            { "dayFilter": "weekend", "meal": "aksam", "amount": 200 }
+          ]
+        },
+        {
+          "id": "yumurta",
+          "name": "Yumurta",
+          "searchQuery": "yumurta 30'lu",
+          "category": "Protein",
+          "categoryClass": "b-good",
+          "unit": "adet",
+          "monthlyUnit": "adet",
+          "slots": [{ "dayFilter": "daily", "meal": "kahvalti", "amount": 4 }]
+        },
+        {
+          "id": "lor",
+          "name": "Lor peyniri",
+          "searchQuery": "lor peyniri",
+          "category": "Protein",
+          "categoryClass": "b-good",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [{ "dayFilter": "daily", "meal": "ara", "amount": 150 }]
+        },
+        {
+          "id": "pirinç",
+          "name": "Pirinç (çiğ)",
+          "searchQuery": "pirinç baldo",
+          "category": "Karbonhidrat",
+          "categoryClass": "b-primary",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [
+            { "dayFilter": "weekday", "meal": "aksam", "amount": 100 },
+            { "dayFilter": "weekend", "meal": "ogle", "amount": 150 },
+            { "dayFilter": "weekend", "meal": "aksam", "amount": 100 }
+          ]
+        },
+        {
+          "id": "yulaf",
+          "name": "Yulaf ezmesi",
+          "searchQuery": "yulaf ezmesi",
+          "category": "Karbonhidrat",
+          "categoryClass": "b-primary",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [{ "dayFilter": "daily", "meal": "kahvalti", "amount": 100 }]
+        },
+        {
+          "id": "ekmek",
+          "name": "Tam buğday ekmek",
+          "searchQuery": "tam buğday ekmek",
+          "category": "Karbonhidrat",
+          "categoryClass": "b-primary",
+          "unit": "adet",
+          "monthlyUnit": "adet",
+          "slots": [{ "dayFilter": "weekend", "meal": "kahvalti", "amount": 1, "note": "1 dilim" }]
+        },
+        {
+          "id": "muz",
+          "name": "Muz",
+          "searchQuery": "muz",
+          "category": "Meyve",
+          "categoryClass": "b-neutral",
+          "unit": "adet",
+          "monthlyUnit": "kg",
+          "gramsPerUnit": 100,
+          "slots": [{ "dayFilter": "daily", "meal": "ara", "amount": 2 }]
+        },
+        {
+          "id": "elma",
+          "name": "Elma",
+          "searchQuery": "elma",
+          "category": "Meyve",
+          "categoryClass": "b-neutral",
+          "unit": "adet",
+          "monthlyUnit": "kg",
+          "gramsPerUnit": 130,
+          "slots": [{ "dayFilter": "daily", "meal": "ara", "amount": 1 }]
+        },
+        {
+          "id": "domates",
+          "name": "Domates + salatalık",
+          "searchQuery": "domates",
+          "category": "Sebze",
+          "categoryClass": "b-neutral",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [{ "dayFilter": "daily", "meal": "aksam", "amount": 150 }]
+        },
+        {
+          "id": "zeytin",
+          "name": "Zeytinyağı",
+          "searchQuery": "zeytinyağı 500 ml",
+          "category": "Yağ",
+          "categoryClass": "b-warn",
+          "unit": "ml",
+          "monthlyUnit": "adet",
+          "monthlyQtyOverride": 1,
+          "slots": [{ "dayFilter": "daily", "meal": "aksam", "amount": 15 }]
+        },
+        {
+          "id": "ceviz",
+          "name": "Ceviz",
+          "searchQuery": "ceviz içi",
+          "category": "Yağ",
+          "categoryClass": "b-warn",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [{ "dayFilter": "daily", "meal": "ara", "amount": 20 }]
+        },
+        {
+          "id": "bal",
+          "name": "Bal",
+          "searchQuery": "bal 300 g",
+          "category": "Karbonhidrat",
+          "categoryClass": "b-primary",
+          "unit": "g",
+          "monthlyUnit": "adet",
+          "monthlyQtyOverride": 1,
+          "slots": [{ "dayFilter": "daily", "meal": "kahvalti", "amount": 10 }]
+        }
+      ],
+      "supplements": [
+        {
+          "id": "whey",
+          "name": "Whey protein tozu",
+          "searchQuery": "whey protein 1 kg",
+          "category": "Supplement",
+          "categoryClass": "b-warn",
+          "unit": "g",
+          "monthlyUnit": "adet",
+          "monthlyQtyOverride": 1,
+          "slots": [{ "dayFilter": "daily", "meal": "antrenman", "amount": 30 }]
+        },
+        {
+          "id": "kreatin",
+          "name": "Kreatin monohidrat",
+          "searchQuery": "kreatin monohidrat 300 g",
+          "category": "Supplement",
+          "categoryClass": "b-warn",
+          "unit": "g",
+          "monthlyUnit": "adet",
+          "monthlyQtyOverride": 0.5,
+          "slots": [{ "dayFilter": "daily", "meal": "sabah", "amount": 5 }]
+        }
+      ]
+    },
+    {
+      "id": "temel-ev",
+      "name": "Temel ev planı",
+      "description": "Yemekhane yok, supplement yok. Basit günlük liste.",
+      "ingredients": [
+        {
+          "id": "tavuk",
+          "name": "Tavuk göğsü",
+          "searchQuery": "tavuk göğsü",
+          "category": "Protein",
+          "categoryClass": "b-good",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [
+            { "dayFilter": "daily", "meal": "ogle", "amount": 200 },
+            { "dayFilter": "daily", "meal": "aksam", "amount": 150 }
+          ]
+        },
+        {
+          "id": "yumurta",
+          "name": "Yumurta",
+          "searchQuery": "yumurta 30'lu",
+          "category": "Protein",
+          "categoryClass": "b-good",
+          "unit": "adet",
+          "monthlyUnit": "adet",
+          "slots": [{ "dayFilter": "daily", "meal": "kahvalti", "amount": 3 }]
+        },
+        {
+          "id": "pirinç",
+          "name": "Pirinç",
+          "searchQuery": "pirinç",
+          "category": "Karbonhidrat",
+          "categoryClass": "b-primary",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [{ "dayFilter": "daily", "meal": "aksam", "amount": 120 }]
+        },
+        {
+          "id": "yulaf",
+          "name": "Yulaf",
+          "searchQuery": "yulaf ezmesi",
+          "category": "Karbonhidrat",
+          "categoryClass": "b-primary",
+          "unit": "g",
+          "monthlyUnit": "kg",
+          "slots": [{ "dayFilter": "daily", "meal": "kahvalti", "amount": 80 }]
+        }
+      ],
+      "supplements": []
+    }
+  ]
+}

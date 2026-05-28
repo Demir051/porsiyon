@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Malzeme fiyatları · Porsiyon</title>
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div class="title">
+              <h1>Malzeme fiyatları</h1>
+              <p>Porsiyon · A101 canlı fiyat</p>
+            </div>
+          </div>
+
+          <div class="controls">
+            <nav class="app-nav" aria-label="Sayfa geçişi">
+              <a href="/">Ana sayfa</a>
+              <a href="/plan.html">Öğün planı</a>
+              <a href="/malzemeler.html" class="active">Malzeme fiyatları</a>
+            </nav>
+            <button type="button" id="btnGuncelleHepsi" class="btn primary">
+              Tüm fiyatları güncelle
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="hint">
+        Malzeme ekleyin; fiyatlar A101 marketinden çekilir ve tarayıcıda saklanır.
+      </p>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Malzeme listesi</h2>
+              <p>Kayıtlı ürünler ve mağaza karşılaştırması</p>
+            </div>
+            <span id="durum" class="durum"></span>
+          </div>
+          <div class="panel-body">
+            <div id="malzemeListesi" class="malzeme-listesi"></div>
+            <p id="bosMesaj" class="bos-mesaj hidden">
+              Henüz malzeme yok.<br />
+              <strong>Sağdaki formdan</strong> ekleyip fiyat çekebilirsiniz.
+            </p>
+          </div>
+        </div>
+
+        <aside>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Yeni malzeme</h2>
+                <p>Ekle ve hemen fiyat çek</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <form id="formMalzeme" class="form-grid">
+                <label class="span-2">
+                  Malzeme adı
+                  <input type="text" name="ad" placeholder="ör. domates, süt, yumurta" required />
+                </label>
+                <label>
+                  Miktar
+                  <input type="number" name="miktar" value="1" min="0.01" step="0.01" />
+                </label>
+                <label>
+                  Birim
+                  <select name="birim">
+                    <option value="adet">adet</option>
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="lt">lt</option>
+                  </select>
+                </label>
+                <button type="submit" class="btn primary span-2">Ekle ve fiyat çek</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top: 14px">
+            <div class="panel-head">
+              <div>
+                <h2>Özet</h2>
+                <p id="ozet-alt">Liste yüklendiğinde güncellenir</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="aside-cards">
+                <div class="stat">
+                  <div class="lbl">Malzeme</div>
+                  <div class="val" id="stat-count">0</div>
+                  <div class="sub">kayıtlı</div>
+                </div>
+                <div class="stat">
+                  <div class="lbl">Fiyatlı</div>
+                  <div class="val" id="stat-priced">0</div>
+                  <div class="sub">en az 1 mağaza</div>
+                </div>
+              </div>
+              <div class="note">
+                Öğün planındaki aylık alışveriş listesi için
+                <a href="/plan.html" style="color: var(--primary)">Öğün planı → Aylık</a>
+                görünümünü kullanın.
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script src="price-store.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

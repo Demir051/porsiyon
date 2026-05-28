@@ -1,0 +1,176 @@
+const durumEl = document.getElementById('durum');
+const listeEl = document.getElementById('malzemeListesi');
+const bosMesajEl = document.getElementById('bosMesaj');
+const formEl = document.getElementById('formMalzeme');
+const btnGuncelleHepsi = document.getElementById('btnGuncelleHepsi');
+
+function setDurum(msg, isError = false) {
+  durumEl.textContent = msg;
+  durumEl.style.color = isError ? '#dc2626' : '';
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+    ...options,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'İstek başarısız');
+  return data;
+}
+
+function formatTarih(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('tr-TR', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function enUcuzMagaza(fiyatlar) {
+  const entries = Object.entries(fiyatlar || {}).filter(([, v]) => v?.fiyat != null);
+  if (!entries.length) return null;
+  entries.sort((a, b) => a[1].fiyat - b[1].fiyat);
+  return entries[0];
+}
+
+function fiyatKutuHtml(magaza, bilgi) {
+  const etiket = magaza === 'migros' ? 'Migros' : 'A101';
+  if (!bilgi?.fiyat) {
+    return `
+      <div class="fiyat-kutu ${magaza}">
+        <h4>${etiket}</h4>
+        <div class="fiyat-bos">Henüz fiyat yok</div>
+      </div>`;
+  }
+  return `
+    <div class="fiyat-kutu ${magaza}">
+      <h4>${etiket}</h4>
+      <div class="fiyat-tutar">${bilgi.fiyatLabel || bilgi.fiyat + ' TL'}</div>
+      <div class="fiyat-urun">
+        <a href="${bilgi.url}" target="_blank" rel="noopener">${bilgi.urunAdi}</a>
+        <br /><small>Güncellendi: ${formatTarih(bilgi.guncellendi)}</small>
+      </div>
+    </div>`;
+}
+
+function malzemeKartHtml(m) {
+  const enUcuz = enUcuzMagaza(m.fiyatlar);
+  const enUcuzHtml = enUcuz
+    ? `<span class="en-ucuz">En ucuz: ${enUcuz[0] === 'migros' ? 'Migros' : 'A101'} — ${enUcuz[1].fiyatLabel || enUcuz[1].fiyat + ' TL'}</span>`
+    : '';
+
+  return `
+    <article class="malzeme-kart" data-id="${m.id}">
+      <div>
+        <div class="malzeme-baslik">
+          <h3>${escapeHtml(m.ad)}</h3>
+          <span class="malzeme-meta">${m.miktar} ${m.birim}</span>
+        </div>
+        <div class="malzeme-meta">Arama: "${escapeHtml(m.aramaTerimi || m.ad)}"</div>
+        <div class="fiyat-grid">
+          ${fiyatKutuHtml('migros', m.fiyatlar?.migros)}
+          ${fiyatKutuHtml('a101', m.fiyatlar?.a101)}
+        </div>
+        ${enUcuzHtml}
+      </div>
+      <div class="aksiyonlar">
+        <button type="button" class="btn btn-ghost btn-small btn-guncelle" data-id="${m.id}">Fiyatları güncelle</button>
+        <button type="button" class="btn btn-danger btn-small btn-sil" data-id="${m.id}">Sil</button>
+      </div>
+    </article>`;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function renderListe(malzemeler) {
+  if (!malzemeler.length) {
+    listeEl.innerHTML = '';
+    bosMesajEl.classList.remove('hidden');
+    return;
+  }
+  bosMesajEl.classList.add('hidden');
+  listeEl.innerHTML = malzemeler.map(malzemeKartHtml).join('');
+}
+
+async function yukle() {
+  const { malzemeler } = await api('/api/malzemeler');
+  renderListe(malzemeler);
+}
+
+async function guncelleTek(id) {
+  setDurum('Fiyatlar çekiliyor…');
+  await api(`/api/malzemeler/${id}/guncelle`, { method: 'POST', body: '{}' });
+  await yukle();
+  setDurum('Fiyatlar güncellendi.');
+}
+
+formEl.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(formEl);
+  const body = Object.fromEntries(fd.entries());
+  body.miktar = Number(body.miktar);
+
+  try {
+    setDurum('Malzeme ekleniyor…');
+    btnGuncelleHepsi.disabled = true;
+    const item = await api('/api/malzemeler', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    await guncelleTek(item.id);
+    formEl.reset();
+    formEl.miktar.value = 1;
+  } catch (err) {
+    setDurum(err.message, true);
+  } finally {
+    btnGuncelleHepsi.disabled = false;
+  }
+});
+
+listeEl.addEventListener('click', async (e) => {
+  const guncelle = e.target.closest('.btn-guncelle');
+  const sil = e.target.closest('.btn-sil');
+  if (guncelle) {
+    try {
+      guncelle.disabled = true;
+      await guncelleTek(guncelle.dataset.id);
+    } catch (err) {
+      setDurum(err.message, true);
+    } finally {
+      guncelle.disabled = false;
+    }
+  }
+  if (sil) {
+    if (!confirm('Bu malzemeyi silmek istediğinize emin misiniz?')) return;
+    try {
+      await api(`/api/malzemeler/${sil.dataset.id}`, { method: 'DELETE' });
+      await yukle();
+      setDurum('Malzeme silindi.');
+    } catch (err) {
+      setDurum(err.message, true);
+    }
+  }
+});
+
+btnGuncelleHepsi.addEventListener('click', async () => {
+  try {
+    btnGuncelleHepsi.disabled = true;
+    setDurum('Tüm malzemeler için fiyatlar çekiliyor (biraz sürebilir)…');
+    await api('/api/malzemeler/guncelle', { method: 'POST', body: '{}' });
+    await yukle();
+    setDurum('Tüm fiyatlar güncellendi.');
+  } catch (err) {
+    setDurum(err.message, true);
+  } finally {
+    btnGuncelleHepsi.disabled = false;
+  }
+});
+
+yukle().catch((err) => setDurum(err.message, true));
