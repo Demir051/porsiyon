@@ -2,6 +2,8 @@
 
 Öğün planı, aylık alışveriş listesi ve **A101** fiyatları için yerel web uygulaması.
 
+Canlı site: https://porsiyon.vercel.app/
+
 ## Özellikler
 
 - **Günlük öğün planı** — hazır liste, hafta içi / hafta sonu kartları
